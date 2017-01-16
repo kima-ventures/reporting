@@ -1,0 +1,88 @@
+{% extends "base_logged.html" %}
+{% load humanize %}
+
+{% block title %} - Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">{% if create %}Adding a new user{% else %}Editing a user{% endif %}</div>
+                <div class="panel-body">
+                    <form method="POST" class="form-horizontal">{% csrf_token %}
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger" style="font-weight:300;" role="alert"><strong><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></strong>&nbsp;&nbsp;{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+
+                        <div class="form-group{% if form.first_name.errors %} has-error{% endif %}">
+                            <label class="col-sm-4 control-label">First name :</label>
+                            <div class="col-sm-8">
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}<span style="font-size:0.8em;" class="help-block">{% for error in form.first_name.errors %}{{ error }}{% endfor %}</span>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group{% if form.last_name.errors %} has-error{% endif %}">
+                            <label class="col-sm-4 control-label">Last name :</label>
+                            <div class="col-sm-8">
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}<span style="font-size:0.8em;" class="help-block">{% for error in form.last_name.errors %}{{ error }}{% endfor %}</span>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group{% if form.email.errors %} has-error{% endif %}">
+                            <label class="col-sm-4 control-label">E-mail :</label>
+                            <div class="col-sm-8">
+                                {{ form.email }}
+                                {% if form.email.errors %}<span style="font-size:0.8em;" class="help-block">{% for error in form.email.errors %}{{ error }}{% endfor %}</span>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group{% if form.password.errors %} has-error{% endif %}">
+                            <label class="col-sm-4 control-label">Password :</label>
+                            <div class="col-sm-8">
+                                {{ form.password }}
+                                {% if form.password.errors %}<span style="font-size:0.8em;" class="help-block">{% for error in form.password.errors %}{{ error }}{% endfor %}</span>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group{% if form.permission_mode.errors %} has-error{% endif %}">
+                            <label class="col-sm-4 control-label">Permission mode :</label>
+                            <div class="col-sm-8">
+                                {{ form.permission_mode }}
+                                {% if form.permission_mode.errors %}<span style="font-size:0.8em;" class="help-block">{% for error in form.permission_mode.errors %}{{ error }}{% endfor %}</span>{% else %}
+                                <span class="help-block" style="font-size:0.8em;">
+                                    <b>Allow default</b> means that the user will have access by default to all companies, and you'll be able to remove him access to startups on a case per case basis<br/><br/>
+                                    <b>Deny default</b> means that the user will be denied by default to all companies, and you'll be able to grand him access to startups on a case per case basis
+                                </span>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group{% if form.relay_email.errors %} has-error{% endif %}">
+                            <label class="col-sm-4 control-label">Relay by e-mail :</label>
+                            <div class="col-sm-8">
+                                <div class="checkbox">
+                                    <label>
+                                        {{ form.relay_email }} Send the new reporting e-mails to the user
+                                    </label>
+                                </div>
+                                {% if form.relay_email.errors %}<span style="font-size:0.8em;" class="help-block">{% for error in form.relay_email.errors %}{{ error }}{% endfor %}</span>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-8 text-right">
+                                <a href="{% url "admin_user_list" %}" class="btn btn-default">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

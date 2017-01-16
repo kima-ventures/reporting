@@ -1,0 +1,44 @@
+{% extends "base_logged.html" %}
+{% load bleach_tags %}
+{% load humanize %}
+
+{% block title %} - {{ message.subject }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <ol class="breadcrumb">
+            <li><a href="{% url "startup_list" %}">Startups</a></li>
+            <li><a href="{% url "startup_detail" message_db.mailbox.startup_id %}" class="active">{{message_db.mailbox.startup.name}}</a></li>
+            <li class="active">{{ message.subject }}</li>
+        </ol>
+
+        <h4 style="padding-bottom:15px;">{{ message.subject }}{% if message_db.tag %}&nbsp;&nbsp;<span class="label label-default">{{ message_db.tag }}</span>{% endif %}</h4>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div style="float:right">
+                    {{ message_db.created_at|date:'d N y H:i' }} ({{ message_db.created_at|naturaltime }})
+                </div>
+                <div style="margin-bottom:1em;">
+                    <b>{{ message_db.mail_from_name }}</b> <span style="color:#555;">&lt;{{message_db.mail_from}}&gt;</span><br/>
+                    <span style="color:#777;">to {{ message.to }}</span>
+                    {% if message.cc %}<br/><span style="color:#777;">cc {{ message.cc }}</span>{% endif %}
+                </div>
+
+                {% if message.html %}
+                    {{ message.html|bleach }}
+                {% else %}
+                    {{ message.plaintext|linebreaksbr }}
+                {% endif %}
+                <div>
+                    {% for attachment in message.attachments %}
+                    <a class="btn btn-default" href="{% url "message_attachment" message_db.id attachment.id %}" target="_blank">
+                        <i class="glyphicon glyphicon-file"></i><br/>
+                        {{ attachment.filename }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

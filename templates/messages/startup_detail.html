@@ -1,0 +1,40 @@
+{% extends "base_logged.html" %}
+{% load humanize %}
+
+{% block title %} - {{startup.name}}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <ol class="breadcrumb">
+                <li><a href="{% url "startup_list" %}">Startups</a></li>
+                <li class="active">{{startup.name}}</li>
+            </ol>
+
+            <table class="table table-hover" style="table-layout:fixed;">
+                {% for message in messages %}
+                <tr onclick="document.location.href='{% url "message_detail" message.id %}';" class="list-item"> <!-- use a custom attr -->
+                    <td>
+                        {{ message.mail_from_name }}
+                    </td>
+                    <td>
+                        {% if message.tag %}<span class="label label-default">{{ message.tag }}</span>&nbsp;&nbsp;{% endif %}{{ message.subject }}
+                    </td>
+                    <td class="text-right">
+                        {% if message.has_attachment %}<i class="glyphicon glyphicon-file"></i>{% endif %} {{ message.created_at|naturaltime }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <style>
+        .list-item { border: 1px solid #ddd; }
+        .list-item:hover { cursor:pointer; }
+    </style>
+
+</div>
+
+{% endblock %}

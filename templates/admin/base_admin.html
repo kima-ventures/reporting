@@ -1,0 +1,21 @@
+{% extends "base_logged.html" %}
+{% load i18n %}
+
+{% block title %} - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="container">
+        <div class="col-sm-3">
+            <div class="list-group">
+                <a href="{% url "admin_user_list" %}" class="list-group-item{% if cur_admin_page == "user" %} active{% endif %}">Manage your users</a>
+                <a href="{% url "admin_startup_list" %}" class="list-group-item{% if cur_admin_page == "startup" %} active{% endif %}">Manage the startups</a>
+                <a href="/django_admin/" class="list-group-item">God mode</a>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            {% block admin_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

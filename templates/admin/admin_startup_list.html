@@ -1,0 +1,100 @@
+{% extends "admin/base_admin.html" %}
+{% load humanize %}
+{% load kimatags %}
+
+{% block admin_content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Manage the startups
+    </div>
+    <div class="panel-body">
+        <div id="startuplist">
+            <table class="table">
+                <thead>
+                    <th>Name</th>
+                    <th>URL</th>
+                    <th class="text-right">Who can access</th>
+                </thead>
+                <tbody>
+                {% for startup in startups %}
+                    <tr>
+                        <td>
+                            <startup-editable-field :field_key="'name'" :initial_value="'{{startup.name|escapejs}}'" :startup_id="{{ startup.id }}"></startup-editable-field>
+                        </td>
+                        <td>
+                            <startup-editable-field :field_key="'url'" :initial_value="'{{startup.url|escapejs}}'" :startup_id="{{ startup.id }}"></startup-editable-field>
+                        </td>
+                        <td class="text-right">{% for user in user_permissions|lookup:startup.id %}
+                            <user-permission-label :first_name="'{{ user.0.first_name|escapejs }}'"
+                                                   :initial_permission="{% if user.1 %}true{% else %}false{% endif %}"
+                                                   :user_id="{{ user.0.id }}"
+                                                   :startup_id="{{ startup.id }}"></user-permission-label>
+                        {% endfor %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+Vue.component('user-permission-label', {
+    delimiters: ['${', '}'],
+    props: ['first_name','user_id','startup_id','initial_permission'],
+    data: function () {
+        return { has_permission: this.initial_permission }
+    },
+    template: '<span class="label label-tag-toggle" :class="has_permission ? \'label-primary\' : \'label-default\'"><a href="#" @click.prevent="toggleLabel">${first_name}</a></span>',
+    methods: {
+        toggleLabel: function() {
+            this.$http.post('/admin/startup/'+parseInt(this.startup_id)+'/permission/', {'user_id': this.user_id, 'has_permission': !this.has_permission}, {emulateJSON: true}).then(function() {
+                this.has_permission = !this.has_permission;
+            }, null);
+        }
+    }
+});
+
+Vue.component('startup-editable-field', {
+    delimiters: ['${', '}'],
+    props: ['field_key', 'initial_value', 'startup_id'],
+    data: function() {
+        return {
+            value: this.initial_value,
+            new_value: this.initial_value,
+            editing: false
+        }
+    },
+    template: '<span v-if="!editing" @click="edit">${value}&nbsp;&nbsp;<a href="#" class="btn btn-default btn-xs" onclick="return false;"><i class="glyphicon glyphicon-pencil"></i></a></span><div v-else><form v-on:submit.prevent="submit"><input type="text" class="form-control" v-model="new_value" style="width: inherit; display: inline;"/> <button class="btn btn-primary" type="submit">Ok</button></form></div>',
+    methods: {
+        edit: function() {
+            this.new_value = this.value;
+            this.editing = true;
+        },
+        submit: function() {
+            this.$http.post('/admin/startup/'+parseInt(this.startup_id)+'/edit/', {'key': this.field_key, 'value': this.new_value}, {emulateJSON: true}).then(function() {
+                this.editing = false;
+                this.value = this.new_value;
+            }, null);
+            return false;
+        }
+    }
+});
+
+new Vue({
+    delimiters: ['${', '}'],
+    el: '#startuplist',
+});
+</script>
+
+{% comment %} TODO : Put in a global style {% endcomment %}
+<style>
+.label-tag-toggle.label-default a { color: white; text-decoration:none; }
+.label-tag-toggle.label-default a:hover { text-decoration:none; }
+.label-tag-toggle.label-default:hover { background-color: #337ab7; }
+
+.label-tag-toggle.label-primary a { color: white; text-decoration:none; }
+.label-tag-toggle.label-primary a:hover { text-decoration:none; }
+.label-tag-toggle.label-primary:hover { background-color: #777; }
+</style>
+{% endblock %}

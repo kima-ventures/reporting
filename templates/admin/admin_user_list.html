@@ -1,0 +1,38 @@
+{% extends "admin/base_admin.html" %}
+{% load humanize %}
+{% load kimatags %}
+
+{% block admin_content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Manage your users
+        <div style="float:right;">
+            <a class="btn btn-primary btn-xs" href="{% url "admin_user_add" %}">New user</a>
+        </div>
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mode</th>
+                <th>Relay e-mails</th>
+                <th>Number of startups</th>
+                <th></th>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.get_full_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td><span class="label {% if user.userprofile.permission_mode == user.userprofile.PERMISSION_ALLOW_DEFAULT %}label-success{% else %}label-danger{% endif %}">{{ user.userprofile.get_permission_mode_display }}</span></td>
+                    <td>{% if user.userprofile.relay_email %}<i class="glyphicon glyphicon-ok text-success"></i>{% else %}<i class="glyphicon glyphicon-remove text-danger"></i>{% endif %}</td>
+                    <td>{{ startup_per_user|lookup:user.id }}</td>
+                    <td class="text-right"><a href="{% url "admin_user_edit" user.id %}" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-pencil"></i></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
