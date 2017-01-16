@@ -9,21 +9,23 @@ to be written
 
 Setup with Heroku
 -------------------
-*1. Create your project on Heroku*
+**1. Create your project on Heroku**
 
-*2. Type the following commands*
+**2. Type the following commands**
 
      heroku login
      heroku git:remote -a name-of-your-project
      git push heroku master
 
-*3. Setup sendgrid*
+**3. Setup sendgrid**
 
 First, create a Sendgrid account. Setup an inbound hook that will go to the url :
 
      https://name-of-your-project.herokuapp.com/!callback/mail/a-secret-password-you-choose/
 
-*4. Configure the project*
+Please take care of setting up the hook in RAW mode.
+
+**4. Configure the project**
 
 In the Settings tab, reveal the config variables. Then add the following configuration variables :
 
@@ -34,7 +36,7 @@ In the Settings tab, reveal the config variables. Then add the following configu
     SENDGRID_PASSWORD -> Your sendgrid password
     APP_DEPLOYED -> 1
 
-*5. Migrate the database and create the initial user*
+**5. Migrate the database and create the initial user**
 
 Type the following commands :
 
