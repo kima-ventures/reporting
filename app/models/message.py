@@ -108,6 +108,8 @@ class Message(models.Model):
                 self.has_attachment = True
 
     def relay_email(self):
+        from app.models import StartupPermission
+
         mail_to = []
         for u in StartupPermission.users_allowed(self.mailbox.startup):
             if u.userprofile.relay_email:
