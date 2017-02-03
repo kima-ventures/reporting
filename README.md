@@ -5,7 +5,10 @@ Kima Reporting is an opensource reporting tool for VCs.
 
 Features
 ----------
-to be written
+- Manage reporting emails
+- Tag them so you can keep trace of all conversations
+- Assign members and handle conflicts of interests
+- Relay emails
 
 Setup with Heroku
 -------------------
