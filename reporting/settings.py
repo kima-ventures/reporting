@@ -30,7 +30,9 @@ ADMINS = (
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-ie*gpclkc@*(wjrszi6ut)@xd=5t&dwdrms2s^ih-v%c6ff8v'
+SECRET_KEY = os.getenv('SECRET_KEY',None)
+if SECRET_KEY is None:
+    raise Exception("SECRET_KEY environment variable needs to be filled")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('APP_DEPLOYED') is None

@@ -37,6 +37,7 @@ In the Settings tab, reveal the config variables. Then add the following configu
     CALLBACK_EMAIL_PASSWORD -> The password you've entered for Sendgrid's inbound hook
     SENDGRID_USERNAME -> Your sendgrid username
     SENDGRID_PASSWORD -> Your sendgrid password
+    SECRET_KEY -> A long random string of characters of your choice
     APP_DEPLOYED -> 1
 
 **5. Migrate the database and create the initial user**
