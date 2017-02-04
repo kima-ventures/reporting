@@ -32,11 +32,15 @@ Please take care of setting up the hook in RAW mode.
 
 In the Settings tab, reveal the config variables. Then add the following configuration variables :
 
+    FUND_NAME -> The name of your fund
+    
     ADMIN_EMAIL -> Your e-mail address
     ADMIN_NAME -> Your name
+    
     CALLBACK_EMAIL_PASSWORD -> The password you've entered for Sendgrid's inbound hook
     SENDGRID_USERNAME -> Your sendgrid username
     SENDGRID_PASSWORD -> Your sendgrid password
+    
     SECRET_KEY -> A long random string of characters of your choice
     APP_DEPLOYED -> 1
 

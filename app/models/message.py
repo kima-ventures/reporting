@@ -17,6 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import email
+import os
 import smtplib
 
 from django.conf import settings
@@ -116,10 +117,11 @@ class Message(models.Model):
                 mail_to.append(u.email)
 
         # Edit the subject
+        prepend_with = u"[{0}-Reporting] ".format(os.getenv("FUND_NAME", "Kima"))
         e = email.message_from_string(self.email)
-        if not "[Kima-Reporting] " in self.subject:
+        if not prepend_with in self.subject:
             del e["Subject"]
-            e["Subject"] = u"[Kima-Reporting] "+self.subject
+            e["Subject"] = prepend_with+self.subject
 
         # TODO : See if it's possible to access the raw SMTP object within Django
         server = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
