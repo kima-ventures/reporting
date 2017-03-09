@@ -106,8 +106,12 @@ class Message(models.Model):
         emailheaders = dict(emailobj)
 
         self.message_id = emailheaders.get("Message-ID")
-        self.in_reply_to = emailheaders.get("In-Reply-To")[:255]
-        self.references = emailheaders.get("References")[:255]
+
+        self.in_reply_to = emailheaders.get("In-Reply-To")
+        if self.in_reply_to is not None: self.in_reply_to = self.in_reply_to[:255]
+
+        self.references = emailheaders.get("References")
+        if self.references is not None: self.references = self.references[:255]
 
         for part in emailobj.walk():
             c_disp = part.get_param('attachment', None, 'content-disposition')
