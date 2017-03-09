@@ -19,6 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.core.cache import cache
 
 from app.models.startup import Startup
 
@@ -36,14 +37,21 @@ class StartupPermission(models.Model):
 
     @staticmethod
     def has_user_permission(user, startup, userprofile=None):
+        cache_key = u"has_user_permission|{0}|{1}".format(user.id,startup.id)
+        if cache.get(cache_key):
+            return cache.get(cache_key)
+
         from app.models.userprofile import UserProfile
         if not userprofile:
             userprofile = UserProfile.objects.get_or_create(user=user)[0]
 
         if userprofile.permission_mode == UserProfile.PERMISSION_ALLOW_DEFAULT:
-            return (not StartupPermission.objects.filter(user=user, startup=startup).exists())
+            has_user_permission = (not StartupPermission.objects.filter(user=user, startup=startup).exists())
         else:
-            return (StartupPermission.objects.filter(user=user, startup=startup).exists())
+            has_user_permission = (StartupPermission.objects.filter(user=user, startup=startup).exists())
+
+        cache.set(cache_key, has_user_permission, 5) # 5 secs cache
+        return has_user_permission
 
     @staticmethod
     def startups_allowed(user):
