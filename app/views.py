@@ -66,7 +66,7 @@ def message_detail(request, id):
     message_db = get_object_or_404(Message, id=id)
     if not user_has_access(request, message_db.mailbox.startup): return HttpResponseRedirect("/")
 
-    message_obj = email.message_from_string(message_db.email)
+    message_obj = email.message_from_string(message_db.messagecontent.email)
     message = {
         "from": message_obj["From"],
         "to": message_obj["To"],
@@ -115,7 +115,6 @@ def incoming_callback(request, pwd):
         to=json.loads(request.POST.get("envelope"))["to"][0].lower(),
         subject=request.POST.get("subject")
     )
-    msg.save()
     msg.relay_email()
 
     return HttpResponse("ok")

@@ -23,6 +23,8 @@ import smtplib
 from django.conf import settings
 from django.db import models
 
+from app.models.messagecontent import MessageContent
+
 
 class Message(models.Model):
     class Meta:
@@ -37,7 +39,6 @@ class Message(models.Model):
     mail_from = models.EmailField()
     rcpt_to = models.EmailField()
     subject = models.TextField()
-    email = models.BinaryField()
 
     message_id = models.CharField(max_length=255,null=True,default=None,db_index=True)
 
@@ -53,7 +54,7 @@ class Message(models.Model):
         return super(Message, self).save(*args, **kwargs)
 
     def get_attachment_list(self):
-        emailobj = email.message_from_string(self.email)
+        emailobj = email.message_from_string(self.messagecontent.email)
         attachments = []
         id = 0
 
@@ -71,7 +72,7 @@ class Message(models.Model):
         return attachments
 
     def get_attachment(self, id):
-        emailobj = email.message_from_string(self.email)
+        emailobj = email.message_from_string(self.messagecontent.email)
         payload = emailobj.get_payload()
 
         id = int(id)
@@ -94,10 +95,12 @@ class Message(models.Model):
         self.tag = self.rcpt_to.split('+')[1].split('@')[0] if '+' in self.rcpt_to else None
 
         self.subject = kwargs['subject']
-        self.email = kwargs['email'].encode('utf-8')
+
+        self.messagecontent = MessageContent()
+        self.messagecontent.email = kwargs['email'].encode('utf-8')
 
         # Parse message_id and has_attachment from the email
-        emailobj = email.message_from_string(self.email)
+        emailobj = email.message_from_string(self.messagecontent.email)
         if "Message-ID" in emailobj:
             self.message_id = emailobj["Message-ID"]
         else:
@@ -107,6 +110,10 @@ class Message(models.Model):
             c_disp = part.get_param('attachment', None, 'content-disposition')
             if c_disp is not None:
                 self.has_attachment = True
+
+        self.save()
+        self.messagecontent.message = self
+        self.messagecontent.save()
 
     def relay_email(self):
         from app.models import StartupPermission
@@ -119,7 +126,7 @@ class Message(models.Model):
         # Edit the subject
         prepend_with = u"[{0}-Reporting] [{1}] ".format(os.getenv("FUND_NAME", "Kima"),
                                                         self.mailbox.startup.name)
-        e = email.message_from_string(self.email)
+        e = email.message_from_string(self.messagecontent.email)
         if not prepend_with in self.subject:
             del e["Subject"]
             e["Subject"] = prepend_with+self.subject
