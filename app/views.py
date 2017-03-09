@@ -81,8 +81,13 @@ def message_detail(request, id):
     for part in message_obj.walk():
         if part.get_content_type() == "text/plain":
             message["plaintext"] += part.get_payload(decode=True)
+            if part.get_content_charset() is not None:
+                message["plaintext"] = message["plaintext"].decode(part.get_content_charset())
+
         elif part.get_content_type() == "text/html":
             message["html"] += part.get_payload(decode=True)
+            if part.get_content_charset() is not None:
+                message["html"] = message["html"].decode(part.get_content_charset())
 
     if len(message["plaintext"]) == 0: message["plaintext"] = None
     if len(message["html"]) == 0: message["html"] = None
