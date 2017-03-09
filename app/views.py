@@ -22,6 +22,8 @@ from email.header import decode_header
 from django import forms
 
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
+from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
@@ -46,7 +48,18 @@ def startup_list(request):
         if user_has_access(request, startup):
             startup.authorized_users = StartupPermission.users_allowed(startup)
 
-            startup_list.append(startup)
+            startup_list.append({
+                "name": startup.name,
+                "latest_mail": naturaltime(startup.latest_mail),
+                "latest_mail_isodate": startup.latest_mail.isoformat(),
+                "authorized_users": map(lambda x : x.first_name, StartupPermission.users_allowed(startup)),
+                "url": reverse("startup_detail", args=(startup.id,))
+            })
+
+    if len(startup_list) == 0:
+        startup_list = None
+    else:
+        startup_list = json.dumps(startup_list)
 
     return render(request, "messages/startup_list.html", {"startup_list": startup_list,
                                                           "warning_date": (timezone.now()-datetime.timedelta(days=60)).isoformat()})
