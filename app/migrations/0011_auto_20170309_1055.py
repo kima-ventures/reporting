@@ -14,6 +14,8 @@ def migrate_messages(apps, schema_editor):
     for message in Message.objects.all():
         emailobj = email.message_from_string(message.messagecontent.email)
         emailheaders = dict(emailobj)
+        if emailheaders is None:
+            continue
 
         message.in_reply_to = emailheaders.get("In-Reply-To")[:255]
         message.references = emailheaders.get("References")[:255]
