@@ -33,6 +33,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 from app.models import Message, Startup
+from app.models import StartupPermission
 from app.models import UserProfile
 from app.utils import user_has_access
 
@@ -43,6 +44,8 @@ def startup_list(request):
 
     for startup in Startup.objects.all().annotate(latest_mail=Max('mailbox__message__created_at')).order_by('-latest_mail'):
         if user_has_access(request, startup):
+            startup.authorized_users = StartupPermission.users_allowed(startup)
+
             startup_list.append(startup)
 
     return render(request, "messages/startup_list.html", {"startup_list": startup_list,

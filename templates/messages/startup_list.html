@@ -125,7 +125,7 @@
                         { name: '{{startup.name|escapejs}}',
                           latest_mail: '{{startup.latest_mail | naturaltime | escapejs}}',
                           latest_mail_isodate : new Date('{{startup.latest_mail | date:'c' | escapejs}}'),
-                          authorized_users: [{% for user in startup|authorized_users %}'{{ user.first_name|escapejs }}',{% endfor %}],
+                          authorized_users: [{% for user in startup.authorized_users %}'{{ user.first_name|escapejs }}',{% endfor %}],
                           url: '{% url "startup_detail" startup.id %}' },
                         {% endfor %}
                     ]
