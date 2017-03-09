@@ -14,11 +14,12 @@ def migrate_messages(apps, schema_editor):
     for message in Message.objects.all():
         emailobj = email.message_from_string(message.messagecontent.email)
         emailheaders = dict(emailobj)
-        if emailheaders is None:
-            continue
 
-        message.in_reply_to = emailheaders.get("In-Reply-To")[:255]
+        message.in_reply_to = emailheaders.get("In-Reply-To")
+        if message.in_reply_to is not None: message.in_reply_to = message.in_reply_to[:255]
         message.references = emailheaders.get("References")[:255]
+        if message.references is not None: message.references = message.references[:255]
+
         message.save()
 
         # This operation is very memory intensive, force the GC collection
