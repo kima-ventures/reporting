@@ -17,7 +17,7 @@ def migrate_messages(apps, schema_editor):
 
         message.in_reply_to = emailheaders.get("In-Reply-To")
         if message.in_reply_to is not None: message.in_reply_to = message.in_reply_to[:255]
-        message.references = emailheaders.get("References")[:255]
+        message.references = emailheaders.get("References")
         if message.references is not None: message.references = message.references[:255]
 
         message.save()
