@@ -35,9 +35,10 @@ class StartupPermission(models.Model):
     startup = models.ForeignKey('Startup')
 
     @staticmethod
-    def has_user_permission(user, startup):
+    def has_user_permission(user, startup, userprofile=None):
         from app.models.userprofile import UserProfile
-        userprofile = UserProfile.objects.get_or_create(user=user)[0]
+        if not userprofile:
+            userprofile = UserProfile.objects.get_or_create(user=user)[0]
 
         if userprofile.permission_mode == UserProfile.PERMISSION_ALLOW_DEFAULT:
             return (not StartupPermission.objects.filter(user=user, startup=startup).exists())
