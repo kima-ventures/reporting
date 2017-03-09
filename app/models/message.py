@@ -41,6 +41,8 @@ class Message(models.Model):
     subject = models.TextField()
 
     message_id = models.CharField(max_length=255,null=True,default=None,db_index=True)
+    in_reply_to = models.CharField(max_length=255,null=True,default=None)
+    references = models.CharField(max_length=255,null=True,default=None)
 
     has_attachment = models.BooleanField(default=False)
 
@@ -104,6 +106,8 @@ class Message(models.Model):
         emailheaders = dict(emailobj)
 
         self.message_id = emailheaders.get("Message-ID")
+        self.in_reply_to = emailheaders.get("In-Reply-To")
+        self.references = emailheaders.get("References")
 
         for part in emailobj.walk():
             c_disp = part.get_param('attachment', None, 'content-disposition')
