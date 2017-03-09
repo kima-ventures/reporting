@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+    <ShortName>Reporting</ShortName>
+    <Description>Search startups in reporting</Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Url type="text/html" method="get" template="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% url "startup_list" %}?search={searchTerms}"/>
+</OpenSearchDescription>

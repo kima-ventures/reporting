@@ -56,13 +56,18 @@ def startup_list(request):
                 "url": reverse("startup_detail", args=(startup.id,))
             })
 
+    # Convert the startup list in JSON
     if len(startup_list) == 0:
         startup_list = None
     else:
         startup_list = json.dumps(startup_list)
 
+    # Get the search query from GET parameters
+    search_query = request.GET.get("search")
+
     return render(request, "messages/startup_list.html", {"startup_list": startup_list,
-                                                          "warning_date": (timezone.now()-datetime.timedelta(days=60)).isoformat()})
+                                                          "warning_date": (timezone.now()-datetime.timedelta(days=60)).isoformat(),
+                                                          "search_query": search_query})
 
 @login_required
 def startup_detail(request, id):
@@ -151,3 +156,6 @@ class KimaLoginForm(AuthenticationForm):
         strip=False,
         widget=forms.PasswordInput(attrs={'class':'form-control'}),
     )
+
+def opensearch(request):
+    return render(request, "opensearch.html", content_type="application/xml")

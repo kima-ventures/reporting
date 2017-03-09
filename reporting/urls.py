@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
@@ -52,5 +52,6 @@ urlpatterns = [
     url(r'^admin/startup/(?P<startup_id>[0-9]+)/permission/$', app_views_admin.startup_permission, name="admin_startup_permission"),
     url(r'^admin/startup/(?P<startup_id>[0-9]+)/edit/$', app_views_admin.startup_edit, name="admin_startup_edit"),
 
+    url(r'^opensearch.xml$', app_views.opensearch, name="opensearch"),
     url(r'^django_admin/', admin.site.urls),
 ]
