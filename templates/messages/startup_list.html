@@ -116,7 +116,7 @@
                 delimiters: ['${', '}'],
                 el: '#grid',
                 data: {
-                    searchQuery: '{{search_query|escapejs}}',
+                    searchQuery: '{% if search_query %}{{search_query|escapejs}}{% endif %}',
                     gridColumns: [{'name':'name','verbose_name':'Name',order_key:'name'},
                                   {'name':'latest_mail','verbose_name':'Latest mail',order_key:'latest_mail_isodate',inverse_order:true,align:'text-center'},
                                   {'name':'authorized_users','verbose_name':'Authorized users',order_key:'authorized_users',align:'text-right'}],
