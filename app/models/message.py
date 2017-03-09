@@ -101,10 +101,9 @@ class Message(models.Model):
 
         # Parse message_id and has_attachment from the email
         emailobj = email.message_from_string(self.messagecontent.email)
-        if "Message-ID" in emailobj:
-            self.message_id = emailobj["Message-ID"]
-        else:
-            self.message_id = None
+        emailheaders = dict(emailobj)
+
+        self.message_id = emailheaders.get("Message-ID")
 
         for part in emailobj.walk():
             c_disp = part.get_param('attachment', None, 'content-disposition')
