@@ -15,8 +15,8 @@ def migrate_messages(apps, schema_editor):
         emailobj = email.message_from_string(message.messagecontent.email)
         emailheaders = dict(emailobj)
 
-        message.in_reply_to = emailheaders.get("In-Reply-To")
-        message.references = emailheaders.get("References")
+        message.in_reply_to = emailheaders.get("In-Reply-To")[:255]
+        message.references = emailheaders.get("References")[:255]
         message.save()
 
         # This operation is very memory intensive, force the GC collection

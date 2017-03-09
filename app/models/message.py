@@ -106,8 +106,8 @@ class Message(models.Model):
         emailheaders = dict(emailobj)
 
         self.message_id = emailheaders.get("Message-ID")
-        self.in_reply_to = emailheaders.get("In-Reply-To")
-        self.references = emailheaders.get("References")
+        self.in_reply_to = emailheaders.get("In-Reply-To")[:255]
+        self.references = emailheaders.get("References")[:255]
 
         for part in emailobj.walk():
             c_disp = part.get_param('attachment', None, 'content-disposition')
