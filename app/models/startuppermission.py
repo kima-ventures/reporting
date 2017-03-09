@@ -36,21 +36,19 @@ class StartupPermission(models.Model):
     startup = models.ForeignKey('Startup')
 
     @staticmethod
-    def has_user_permission(user, startup, userprofile=None):
+    def has_user_permission(user, startup):
         cache_key = u"has_user_permission|{0}|{1}".format(user.id,startup.id)
-        if cache.get(cache_key):
-            return cache.get(cache_key)
+        if cache.get(cache_key): return cache.get(cache_key)
 
         from app.models.userprofile import UserProfile
-        if not userprofile:
-            userprofile = UserProfile.objects.get_or_create(user=user)[0]
+        userprofile = UserProfile.objects.get_or_create(user=user)[0]
 
         if userprofile.permission_mode == UserProfile.PERMISSION_ALLOW_DEFAULT:
             has_user_permission = (not StartupPermission.objects.filter(user=user, startup=startup).exists())
         else:
             has_user_permission = (StartupPermission.objects.filter(user=user, startup=startup).exists())
 
-        cache.set(cache_key, has_user_permission, 5) # 5 secs cache
+        cache.set(cache_key, has_user_permission, 10) # 10 secs cache
         return has_user_permission
 
     @staticmethod
@@ -67,9 +65,13 @@ class StartupPermission(models.Model):
 
     @staticmethod
     def users_allowed(startup):
+        cache_key = u"users_allowed|{0}".format(startup.id)
+        if cache.get(cache_key): return cache.get(cache_key)
+
         users_allowed = []
         for u in get_user_model().objects.filter(is_active=True):
             if StartupPermission.has_user_permission(u, startup):
                 users_allowed.append(u)
 
+        cache.set(cache_key, users_allowed, 30)  # 30 secs cache
         return users_allowed

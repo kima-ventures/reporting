@@ -40,10 +40,9 @@ from app.utils import user_has_access
 @login_required
 def startup_list(request):
     startup_list = []
-    userprofile = UserProfile.objects.get_or_create(user=request.user)[0]
 
     for startup in Startup.objects.all().annotate(latest_mail=Max('mailbox__message__created_at')).order_by('-latest_mail'):
-        if user_has_access(request, startup, userprofile):
+        if user_has_access(request, startup):
             startup_list.append(startup)
 
     return render(request, "messages/startup_list.html", {"startup_list": startup_list,

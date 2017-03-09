@@ -21,8 +21,8 @@ from django.http import HttpResponseRedirect
 from app.models import StartupPermission
 
 
-def user_has_access(request, startup, userprofile=None):
-    return StartupPermission.has_user_permission(request.user, startup, userprofile)
+def user_has_access(request, startup):
+    return StartupPermission.has_user_permission(request.user, startup)
 
 def staff_required(view):
     def f(request, *args, **kwargs):
