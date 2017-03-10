@@ -46,8 +46,6 @@ def startup_list(request):
 
     for startup in Startup.objects.all().annotate(latest_mail=Max('mailbox__message__created_at')).order_by('-latest_mail'):
         if user_has_access(request, startup):
-            startup.authorized_users = StartupPermission.users_allowed(startup)
-
             startup_list.append({
                 "name": startup.name,
                 "latest_mail": naturaltime(startup.latest_mail),
