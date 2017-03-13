@@ -57,24 +57,35 @@ You can now launch the service :
 
 ## Setup with Docker
 
-1. [Install `docker` and `docker-compose`](https://docs.docker.com/engine/installation/)
-2. Create a `.env` file with your settings, i.e.:
+**1. [Install `docker` and `docker-compose`](https://docs.docker.com/engine/installation/)**
+
+**2. Configure the project**
+
+Create a file named `.env` with your settings, i.e.:
 ```ini
-FUND_NAME="xxx"
-ADMIN_EMAIL="xxx"
-ADMIN_NAME="xxx"
-CALLBACK_EMAIL_PASSWORD="xxx"
-SENDGRID_USERNAME="xxx"
-SENDGRID_PASSWORD="xxx"
-SECRET_KEY="xxx"
-APP_DEPLOYED="xxx"
+FUND_NAME="The name of your fund"
+ADMIN_EMAIL="Your e-mail address"
+ADMIN_NAME="Your name"
+CALLBACK_EMAIL_PASSWORD="The password you've entered for Sendgrid's inbound hook"
+SENDGRID_USERNAME="Your sendgrid username"
+SENDGRID_PASSWORD="Your sendgrid password"
+SECRET_KEY="A long random string of characters of your choice"
+APP_DEPLOYED="1"
 ```
-3. run `$> docker-compose up`
-4. open your browser at [http://localhost:8000](http://localhost:8000)
 
----
+You can refer to Heroku's guide in order to setup your Sendgrid's account, and Sendgrid's inbound hook.
 
-### Run `manage.py` commands:
+**3. Start it**
 
-1. start the db server: `docker-compose up -d db`
-2. `docker-compose run web python manage.py createsuperuser`
+Type `docker-compose up` to start it
+
+**4. Create the initial user**
+
+Type the following command in order to create your first admin user :
+
+    docker-compose run web python manage.py createsuperuser 
+
+**5. Use it**
+
+Just open your browser at [http://localhost:8000](http://localhost:8000) and enjoy :)
+
