@@ -1,0 +1,26 @@
+version: '2'
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=reporting
+  web:
+    build: .
+    command: sh -c "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn reporting.wsgi -b 0.0.0.0:8000"
+    restart: always
+    environment:
+      - DATABASE_URL=postgres://postgres@db:5432/reporting
+      - ADMIN_EMAIL
+      - ADMIN_NAME
+      - APP_DEPLOYED=1
+      - CALLBACK_EMAIL_PASSWORD
+      - FUND_NAME
+      - SECRET_KEY
+      - SENDGRID_PASSWORD
+      - SENDGRID_USERNAME
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
