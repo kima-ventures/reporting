@@ -20,6 +20,8 @@ import email, json, datetime
 import os
 from email.header import decode_header
 from django import forms
+from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
 
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.contrib.humanize.templatetags.humanize import naturaltime
@@ -146,16 +148,74 @@ def incoming_callback(request, pwd):
 
     return HttpResponse("ok")
 
-class KimaLoginForm(AuthenticationForm):
-    username = UsernameField(
-        max_length=254,
-        widget=forms.TextInput(attrs={'autofocus': '', 'class': 'form-control'}),
-    )
-    password = forms.CharField(
-        label="Password",
-        strip=False,
-        widget=forms.PasswordInput(attrs={'class':'form-control'}),
-    )
+class KimaLoginForm(forms.Form):
+    """
+    Base class for authenticating users. Extend this to get a form that accepts
+    username/password logins.
+    """
+    email = forms.EmailField(max_length=254, widget=forms.EmailInput(attrs={"class": "form-control"}))
+    password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"class": "form-control"}))
+
+    error_messages = {
+        'invalid_login': ("Please enter a correct email and password. "
+                           "Note that both fields may be case-sensitive."),
+        'inactive': "This account is inactive.",
+    }
+
+    def __init__(self, request=None, *args, **kwargs):
+        """
+        The 'request' parameter is set for custom auth use by subclasses.
+        The form data comes in via the standard 'data' kwarg.
+        """
+        self.request = request
+        self.user_cache = None
+        super(KimaLoginForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+
+        if email and password:
+            try:
+                tmp_user = get_user_model().objects.get(email__iexact=email,is_active=True)
+                self.user_cache = authenticate(username=tmp_user.username,password=password)
+            except get_user_model().DoesNotExist:
+                self.user_cache = None
+
+            if self.user_cache is None:
+                raise forms.ValidationError(
+                    self.error_messages['invalid_login'],
+                    code='invalid_login'
+                )
+            else:
+                self.confirm_login_allowed(self.user_cache)
+
+        return self.cleaned_data
+
+    def confirm_login_allowed(self, user):
+        """
+        Controls whether the given User may log in. This is a policy setting,
+        independent of end-user authentication. This default behavior is to
+        allow login by active users, and reject login by inactive users.
+
+        If the given user cannot log in, this method should raise a
+        ``forms.ValidationError``.
+
+        If the given user may log in, this method should return None.
+        """
+        if not user.is_active:
+            raise forms.ValidationError(
+                self.error_messages['inactive'],
+                code='inactive',
+            )
+
+    def get_user_id(self):
+        if self.user_cache:
+            return self.user_cache.id
+        return None
+
+    def get_user(self):
+        return self.user_cache
 
 def opensearch(request):
     return render(request, "opensearch.html", content_type="application/xml")
