@@ -49,7 +49,7 @@ class UserCreateForm(forms.Form): # TODO : Look if it's not better to subclass a
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email__iexact=email).exists():
             raise ValidationError("This user already exists")
         return email
 
