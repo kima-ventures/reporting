@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django_bleach',
     'django_extensions',
+    'axes',
     'app'
 ]
 
@@ -190,3 +191,7 @@ else:
     EMAIL_HOST_USER = os.getenv('SENDGRID_USERNAME', None)
     EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_PASSWORD', None)
     EMAIL_USE_TLS = True
+
+# Django axes configuration
+AXES_LOGIN_FAILURE_LIMIT = 10
+AXES_COOLOFF_TIME = 5 # 5 hours ban

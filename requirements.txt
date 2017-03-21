@@ -10,3 +10,4 @@ psycopg2==2.5.3
 ipython==4.1.0
 shortuuid==0.4.3
 djangorestframework==3.5.3
+django-axes==2.3.2
