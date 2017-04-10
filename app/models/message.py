@@ -90,10 +90,10 @@ class Message(models.Model):
                 "data":payload[id].get_payload(decode=True)}
 
     def import_from_sendgrid(self, **kwargs):
-        self.mail_from_name = email.utils.parseaddr(kwargs['mail_from'])[0]
-        self.mail_from = email.utils.parseaddr(kwargs['mail_from'].lower())[1]
+        self.mail_from_name = email.utils.parseaddr(kwargs['mail_from'].encode('utf-8'))[0]
+        self.mail_from = email.utils.parseaddr(kwargs['mail_from'].lower().encode('utf-8'))[1]
 
-        self.rcpt_to = email.utils.parseaddr(kwargs['to'].lower())[1]
+        self.rcpt_to = email.utils.parseaddr(kwargs['to'].lower().encode('utf-8'))[1]
         self.tag = self.rcpt_to.split('+')[1].split('@')[0] if '+' in self.rcpt_to else None
 
         self.subject = kwargs['subject']
@@ -142,5 +142,5 @@ class Message(models.Model):
         server = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
         server.starttls()
         server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
-        server.sendmail(self.mail_from.encode('utf-8'), map(lambda x : x.encode('utf-8'), mail_to), e.as_string())
+        server.sendmail(self.mail_from, mail_to, e.as_string())
         server.quit()
