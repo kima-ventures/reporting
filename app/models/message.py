@@ -142,5 +142,5 @@ class Message(models.Model):
         server = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
         server.starttls()
         server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
-        server.sendmail(self.mail_from, mail_to, e.as_string())
+        server.sendmail(self.mail_from.encode('utf-8'), mail_to.encode('utf-8'), e.as_string())
         server.quit()
