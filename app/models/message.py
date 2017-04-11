@@ -90,6 +90,13 @@ class Message(models.Model):
                 "data":payload[id].get_payload(decode=True)}
 
     def import_from_sendgrid(self, **kwargs):
+        # This is a quick & dirty fix against e-mails that are invalid, and that put @ in the name.
+        # It makes email.utils.parseaddr bug, so this next lines just removes @ except in the last part.
+        kwargs['mail_from'] = u' '.join(
+            map(lambda i : i.replace('@',''), kwargs['mail_from'].split(' ')[:-1])
+            +[kwargs['mail_from'].split(' ')[-1]]
+        )
+
         self.mail_from_name = email.utils.parseaddr(kwargs['mail_from'].encode('utf-8'))[0]
         self.mail_from = email.utils.parseaddr(kwargs['mail_from'].lower().encode('utf-8'))[1]
 
