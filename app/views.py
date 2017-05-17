@@ -128,7 +128,7 @@ def message_attachment(request, id, attachment_id):
     response = HttpResponse(attachment["data"], content_type=attachment["content_type"])
 
     # TODO: Should be better to escape than remove
-    response['Content-Disposition'] = u'filename="{0}"'.format(attachment["filename"].replace('"',''))
+    response['Content-Disposition'] = u'filename="{0}"'.format(attachment["filename"].replace('"','').replace('\n',''))
 
     return response
 
