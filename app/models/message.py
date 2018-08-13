@@ -134,7 +134,7 @@ class Message(models.Model):
 
         mail_to = []
         for u in StartupPermission.users_allowed(self.mailbox.startup):
-            if u.userprofile.relay_email:
+            if u.userprofile.relay_email and u.email.lower().strip() != self.mail_from.lower().strip():
                 mail_to.append(u.email)
 
         # Edit the subject
