@@ -6,7 +6,7 @@ django-extensions>=1.5.9
 gunicorn==19.4.1
 dj-database-url==0.4.0
 whitenoise==2.0.6
-psycopg2==2.5.3
+psycopg2==2.7.1
 ipython==4.1.0
 shortuuid==0.4.3
 djangorestframework==3.5.3
