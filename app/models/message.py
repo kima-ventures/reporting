@@ -122,6 +122,10 @@ class Message(models.Model):
             if c_disp is not None:
                 self.has_attachment = True
 
+        # Check if there's another message with the same Message-ID, if so, de-duplicate it
+        if Message.objects.filter(message_id=self.message_id).count() > 0:
+            return
+
         self.save()
         self.messagecontent.message = self
         self.messagecontent.save()
