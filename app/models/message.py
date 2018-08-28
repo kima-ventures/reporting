@@ -153,4 +153,5 @@ class Message(models.Model):
         server.starttls()
         server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
         server.sendmail(self.mail_from, mail_to, e.as_string())
+        print mail_to
         server.quit()
