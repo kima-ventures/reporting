@@ -124,11 +124,13 @@ class Message(models.Model):
 
         # Check if there's another message with the same Message-ID, if so, de-duplicate it
         if Message.objects.filter(message_id=self.message_id).count() > 0:
-            return
+            return False
 
         self.save()
         self.messagecontent.message = self
         self.messagecontent.save()
+
+        return True
 
     def relay_email(self):
         from app.models import StartupPermission

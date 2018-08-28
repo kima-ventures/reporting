@@ -138,12 +138,14 @@ def incoming_callback(request, pwd):
     if request.method != 'POST': return HttpResponseRedirect('/')
 
     msg = Message()
-    msg.import_from_sendgrid(
+    if msg.import_from_sendgrid(
         email=request.POST.get("email"),
         mail_from=request.POST.get("from"),
         to=json.loads(request.POST.get("envelope"))["to"][0].lower(),
         subject=request.POST.get("subject")
-    )
+    ) is False:
+        return HttpResponse("ok")
+
     msg.relay_email()
 
     return HttpResponse("ok")
