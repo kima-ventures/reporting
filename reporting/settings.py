@@ -184,6 +184,16 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 41943040
 # E-mail setup
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+elif os.getenv('BYPASS_SENDGRID_OUTGOING', None) is not None:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('EMAIL_HOST', None)
+    
+    EMAIL_PORT = os.getenv('EMAIL_PORT', None)
+    if EMAIL_PORT is not None: EMAIL_PORT = int(EMAIL_PORT)
+
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', None)
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', None)
+    EMAIL_USE_TLS = True
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.sendgrid.net'
