@@ -140,6 +140,10 @@ class Message(models.Model):
             if u.userprofile.relay_email and u.email.lower().strip() != self.mail_from.lower().strip():
                 mail_to.append(u.email)
 
+        # Don't continue if there's no recipient (smtplib doesn't like that)
+        if len(mail_to) == 0:
+            return
+
         # Edit the subject
         prepend_with = u"[{0}-Reporting] [{1}] ".format(os.getenv("FUND_NAME", "Kima"),
                                                         self.mailbox.startup.name)
