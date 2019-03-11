@@ -153,9 +153,12 @@ class Message(models.Model):
             e["Subject"] = prepend_with+self.subject
 
         # TODO : See if it's possible to access the raw SMTP object within Django
-        server = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
-        server.starttls()
-        server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
-        server.sendmail(self.mail_from, mail_to, e.as_string())
-        print mail_to
-        server.quit()
+
+        try:
+            server = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
+            server.starttls()
+            server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+            server.sendmail(self.mail_from, mail_to, e.as_string())
+            server.quit()
+        except smtplib.SMTPSenderRefused:
+            pass
