@@ -108,6 +108,9 @@ class Message(models.Model):
         self.messagecontent = MessageContent()
         self.messagecontent.email = kwargs['email'].encode('utf-8')
 
+        if (u''.join(self.rcpt_to.split('@')[:-1])).split('+')[0][:255] == "nameofyourcompany":
+            return False
+
         # Parse message_id and has_attachment from the email
         emailobj = email.message_from_string(self.messagecontent.email)
         emailheaders = dict(emailobj)
