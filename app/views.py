@@ -51,7 +51,7 @@ def startup_list(request):
             startup_list.append({
                 "name": startup.name,
                 "latest_mail": naturaltime(startup.latest_mail),
-                "latest_mail_isodate": startup.latest_mail.isoformat(),
+                "latest_mail_isodate": startup.latest_mail.isoformat() if startup.latest_mail else None,
                 "authorized_users": map(lambda x : x.first_name, StartupPermission.users_allowed(startup)),
                 "url": reverse("startup_detail", args=(startup.id,))
             })
